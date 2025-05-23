@@ -1,185 +1,71 @@
 #include "draw_scene.hpp"
-#include <tuple>
+#include <iostream>
+#include "glbasimac/glbi_convex_2D_shape.hpp"
 
+GLBI_Convex_2D_Shape carre;
 
-/// Camera parameters
-float angle_theta{45.0}; // Angle between x axis and viewpoint
-float angle_phy{30.0};	 // Angle between z axis and viewpoint
-float dist_zoom{30.0};	 // Distance between origin and viewpoint
-
-GLBI_Engine myEngine;
-GLBI_Set_Of_Points somePoints(3);
-GLBI_Convex_2D_Shape ground{3};
-GLBI_Convex_2D_Shape circle{3};
-
-GLBI_Set_Of_Points frame(3);
-
-IndexedMesh *sphere;
-StandardMesh *cone;
-
-float degToRad(float const &angle)
-{
-	return (angle * M_PI / 2) / 90;
-}
-
-std::tuple<float, float, float> colorConvertor(int const &r, int const &g, int const &b)
-{
-	return {static_cast<float>(r) / 255.0f,
-			static_cast<float>(g) / 255.0f,
-			static_cast<float>(b) / 255.0f};
-}
-
-std::tuple<float, float, float> colorConvertor(int const &color)
-{
-	return {static_cast<float>(color) / 255.0f,
-			static_cast<float>(color) / 255.0f,
-			static_cast<float>(color) / 255.0f};
-}
+TileMap *globalMap = nullptr;
 
 void initScene()
 {
-	sphere = basicSphere();
-	sphere->createVAO();
+    std::vector<float> carrePoints = {
+        -1.0f , -1.0f, // Coin inférieur gauche
+        1.0f , -1.0f ,  // Coin inférieur droit
+        1.0f , 1.0f ,   // Coin supérieur droit
+        -1.0f , 1.0f    // Coin supérieur gauche
+    };
 
-	cone = basicCone(10, 2);
-	cone->createVAO();
-
-	std::vector<float> points{0.0, 0.0, 0.0};
-	somePoints.initSet(points, 1.0, 1.0, 1.0);
-
-	std::vector<float> baseCarre{-10.0, -10.0, 0.0,
-								 10.0, -10.0, 0.0,
-								 10.0, 10.0, 0.0,
-								 -10.0, 10.0, 0.0};
-	ground.initShape(baseCarre);
-	ground.changeNature(GL_TRIANGLE_FAN);
-
-	std::vector<float> coord_point{0.0f, 0.0f, 0.0f};
-
-	std::vector<float> coord_circle{0.0f, 0.0f, 0.0f};
-
-	for (int i{1}; i < 100; i++)
-	{
-		coord_circle.push_back(sin(static_cast<float>(i) / M_PI));
-		coord_circle.push_back(cos(static_cast<float>(i) / M_PI));
-		coord_circle.push_back(0.0f);
-	}
-
-	circle.initShape(coord_circle);
-	circle.changeNature(GL_TRIANGLE_FAN);
-
-	drawFrame();
+    carre.initShape(carrePoints);
+    carre.changeNature(GL_TRIANGLE_FAN);
 }
 
-void drawFrame()
+void drawSquare(float x, float y, float size, float r, float g, float b)
 {
-	std::vector<float> axes{0.0, 0.0, 0.0,
-							10.0, 0.0, 0.0,
-							0.0, 0.0, 0.0,
-							0.0, 10.0, 0.0,
-							0.0, 0.0, 0.0,
-							0.0, 0.0, 10.0};
+    // std::cout << "Drawing square at (" << x << ", " << y << ") with size " << size << std::endl;
 
-	std ::vector<float> colors{1.0, 0.0, 0.0,
-							   1.0, 0.0, 0.0,
-							   0.0, 1.0, 0.0,
-							   0.0, 1.0, 0.0,
-							   0.0, 0.0, 1.0,
-							   0.0, 0.0, 1.0};
-
-	frame.initSet(axes, colors);
-	frame.changeNature(GL_LINES);
+    myEngine.mvMatrixStack.pushMatrix();
+    myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
+    myEngine.mvMatrixStack.addHomothety({size, size, 1.0f});
+    myEngine.updateMvMatrix();
+    myEngine.setFlatColor(r, g, b);
+    carre.drawShape(); 
+    myEngine.mvMatrixStack.popMatrix();
 }
-
-void drawBase()
-{
-	// myEngine.mvMatrixStack.pushMatrix();
-	// myEngine.mvMatrixStack.addHomothety(6.f);
-	// myEngine.updateMvMatrix();
-	// myEngine.setFlatColor(0.2, 0.0, 0.0);
-	// cercle->draw();
-	// myEngine.mvMatrixStack.popMatrix();
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addRotation(degToRad(90.f), Vector3D(1.f, 0.f, 0.f));
-	myEngine.updateMvMatrix();
-	auto [r, g, b] = colorConvertor(235, 207, 52);
-	myEngine.setFlatColor(r, g, b);
-	cone->draw();
-	myEngine.mvMatrixStack.popMatrix();
-}
-
-void drawArm()
-{
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addHomothety(Vector3D(1.f, 1.f, 0.5f));
-	myEngine.updateMvMatrix();
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addHomothety(Vector3D(1.0f, -1.0f, 1.0f));
-	myEngine.updateMvMatrix();
-	auto [r, g, b] = colorConvertor(245,164,66);
-	myEngine.setFlatColor(r, g, b);
-	cone->draw();
-	myEngine.mvMatrixStack.popMatrix();
-
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.updateMvMatrix();
-	cone->draw();
-	myEngine.mvMatrixStack.popMatrix();
-	myEngine.mvMatrixStack.popMatrix();
-
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addHomothety(1.6f);
-	myEngine.updateMvMatrix();
-	sphere->draw();
-	myEngine.mvMatrixStack.popMatrix();
-}
-
-void drawPan()
-{
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addHomothety(6.f);
-	myEngine.updateMvMatrix();
-	auto [r, g, b] = colorConvertor(255);
-	myEngine.setFlatColor(r, g, b);
-	circle.drawShape();
-	myEngine.mvMatrixStack.popMatrix();
-	myEngine.mvMatrixStack.pushMatrix();
-}
-
-int i = 0;
 
 void drawScene()
 {
-	glPointSize(10.0);
+    glClearColor(0.0f, 0.f, 0.0f, 1.0f); // Fond noir
+    glClear(GL_COLOR_BUFFER_BIT);
+    myEngine.mvMatrixStack.loadIdentity();
+    myEngine.updateMvMatrix();
+    carre.drawShape(); // Dessin du carré de base
 
-	frame.drawSet();
+    if (globalMap != nullptr) {
+        int rows = globalMap->getHeight();
+        int cols = globalMap->getWidth();
 
-	myEngine.setFlatColor(0.2, 0.0, 0.0);
-	ground.drawShape();
+        float cellW = 2.0f / cols; // Largeur d'une cellule
+        float cellH = 2.0f / rows; // Hauteur d'une cellule
 
-	// myEngine.mvMatrixStack.pushMatrix();
-	// myEngine.mvMatrixStack.addTranslation(Vector3D(4.0f, 0.0f, 5.0f));
-	// myEngine.updateMvMatrix();
-	// myEngine.mvMatrixStack.addHomothety(3.0f);
-	// myEngine.updateMvMatrix();
-	// myEngine.setFlatColor(1.0f, 1.0f, 1.0f);
-	// sphere->draw();
-	// myEngine.mvMatrixStack.popMatrix();
+        for (int y = 0; y < rows; ++y) {
+            for (int x = 0; x < cols; ++x) {
+                TileType type = globalMap->getTile(x, y).getType();
 
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addTranslation(Vector3D(cos(i * 0.1) * 5.0f, sin(i * 0.1) * 5.0f, 0.0f));
-	myEngine.updateMvMatrix();
-	myEngine.setFlatColor(1.0f, 1.0f, 1.0f);
-	sphere->draw();
-	myEngine.mvMatrixStack.popMatrix();
-	i++;
+                float x1 = -1.0f + x * cellW;
+                float y1 = -1.0f + y * cellH;
 
-	drawBase();
-	myEngine.mvMatrixStack.pushMatrix();
-	myEngine.mvMatrixStack.addTranslation(Vector3D(0.0f, 0.0f, 10.0f));
-	myEngine.updateMvMatrix();
-	drawArm();
-	myEngine.mvMatrixStack.popMatrix();
-
-	drawPan();
+                if (type == TileType::Solid) {
+                    drawSquare(x1, y1, cellW, 0.5f, 0.3f, 0.1f); // Marron (mur)
+                } else if (type == TileType::Empty) {
+                    drawSquare(x1, y1, cellW, 0.8f, 0.8f, 0.8f); // Gris clair (vide)
+                } else if (type == TileType::Object) {
+                    drawSquare(x1, y1, cellW, 0.0f, 1.0f, 0.0f); // Vert (objet)
+                } else if (type == TileType::Trap) {
+                    drawSquare(x1, y1, cellW, 1.0f, 0.0f, 0.0f); // Rouge (piège)
+                } else {
+                    drawSquare(x1, y1, cellW, 0.2f, 0.2f, 0.2f); // Couleur par défaut
+                }
+            }
+        }
+    }
 }
