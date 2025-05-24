@@ -21,5 +21,6 @@ private:
     float x; // Position X du joueur (en coordonnées flottantes)
     float y; // Position Y du joueur (en coordonnées flottantes)
     float speed; // Vitesse de déplacement
+    float size = 1.9f; // Taille du joueur (carré de 10x10 pixels)
     std::string spritePath; // Chemin vers le sprite du joueur
 };

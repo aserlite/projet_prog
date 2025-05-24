@@ -17,27 +17,37 @@ const std::string& Player::getSpritePath() const {
 }
 
 void Player::move(float dx, float dy, TileMap& map) {
-    // Calculer la nouvelle position
     float newX = x + dx * speed;
     float newY = y + dy * speed;
 
-    // Vérifier les limites de la carte
-    int tileX = static_cast<int>(newX);
-    int tileY = static_cast<int>(newY);
+    // Coins du carré du joueur
+    float corners[4][2] = {
+        { newX, newY }, // bas-gauche
+        { newX + size, newY }, // bas-droit
+        { newX, newY + size }, // haut-gauche
+        { newX + size, newY + size } // haut-droit
+    };
 
-    if (tileX >= 0 && tileX < map.getWidth() && tileY >= 0 && tileY < map.getHeight()) {
+    // Vérifie que tous les coins sont sur des cases traversables
+    for (int i = 0; i < 4; ++i) {
+        int tileX = static_cast<int>(corners[i][0]);
+        int tileY = static_cast<int>(corners[i][1]);
+
+        if (tileX < 0 || tileX >= map.getWidth() || tileY < 0 || tileY >= map.getHeight()) {
+            return; // Sortie de la carte : pas de mouvement
+        }
+
         TileType tileType = map.getTile(tileX, tileY).getType();
-
-        // Le joueur peut se déplacer sur une case vide ou un objet
-        if (tileType == TileType::Empty || tileType == TileType::Object) {
-            x = newX;
-            y = newY;
-        } else if (tileType == TileType::Solid) {
-            // Si le joueur essaie de marcher sur un bloc plein, il peut miner
-            mine(map);
+        if (tileType == TileType::Solid) {
+            return; // Collision détectée : pas de mouvement
         }
     }
+
+    // Si aucun coin ne bloque, déplacement autorisé
+    x = newX;
+    y = newY;
 }
+
 
 void Player::mine(TileMap& map) {
     int tileX = static_cast<int>(x);
