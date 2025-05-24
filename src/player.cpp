@@ -46,6 +46,9 @@ void Player::move(float dx, float dy, TileMap& map) {
     // Si aucun coin ne bloque, déplacement autorisé
     x = newX;
     y = newY;
+
+    // Vérifier si le joueur collecte un objet
+    collect(map);
 }
 
 
@@ -63,14 +66,26 @@ void Player::mine(TileMap& map) {
 }
 
 void Player::collect(TileMap& map) {
-    int tileX = static_cast<int>(x);
-    int tileY = static_cast<int>(y);
+    int startX = static_cast<int>(x);
+    int endX = static_cast<int>(x + size);
+    int startY = static_cast<int>(y);
+    int endY = static_cast<int>(y + size);
 
-    TileType tileType = map.getTile(tileX, tileY).getType();
-
-    if (tileType == TileType::Object) {
-        // Collecter l'objet
-        map.getTile(tileX, tileY) = Tile(TileType::Empty);
-        std::cout << "Objet collecté à (" << tileX << ", " << tileY << ")" << std::endl;
+    for (int tileX = startX; tileX <= endX; ++tileX) {
+        for (int tileY = startY; tileY <= endY; ++tileY) {
+            if (tileX >= 0 && tileX < map.getWidth() && tileY >= 0 && tileY < map.getHeight()) {
+                TileType tileType = map.getTile(tileX, tileY).getType();
+                if (tileType == TileType::Object) {
+                    map.getTile(tileX, tileY) = Tile(TileType::Empty);
+                    score++;
+                    std::cout << "Objet collecté à (" << tileX << ", " << tileY << "). Score : " << score << std::endl;
+                }
+            }
+        }
     }
+}
+
+
+int Player::getScore() const {
+    return score;
 }
