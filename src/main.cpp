@@ -64,7 +64,7 @@ int main() {
 
     // Initialisation de la carte
     TileMap* map = new TileMap(50, 50);
-    map->generateProceduralMap(0.45f, 4);
+    map->generateProceduralMap(0.475f, 4);
     globalMap = map; 
 
     initScene();
