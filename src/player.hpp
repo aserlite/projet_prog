@@ -21,6 +21,8 @@ public:
     const std::string &getSpritePath() const;
     int getScore() const; // Récupérer le score
 
+    bool allObjectsCollected(TileMap& map) const;
+
     void setDirection(Direction dir) { direction = dir; }
     Direction getDirection() const { return direction; }
 

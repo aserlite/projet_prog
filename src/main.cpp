@@ -98,7 +98,6 @@ int main() {
             player.move(1.0f, 0.0f, *globalMap); // Droite
         }
         if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-            std::cout << "Mining at (" << player.getX() << ", " << player.getY() << ")" << std::endl;
             player.mine(*globalMap);
         }
 
@@ -108,6 +107,7 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    
 
     delete map;
 
