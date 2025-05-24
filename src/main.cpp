@@ -1,6 +1,7 @@
 #define GLFW_INCLUDE_NONE
 #include "tile_map.hpp"
 #include "draw_scene.hpp"
+#include "player.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <iostream>
@@ -31,6 +32,8 @@ void onWindowResized(GLFWwindow* /*window*/, int width, int height) {
                                  GL_VIEW_SIZE / (2.0 * aspectRatio));
     }
 }
+
+Player player(1.0f, 1.0f, 0.1f, "player_sprite.png"); // Déclaration globale
 
 int main() {
     // Initialisation de GLFW
@@ -72,6 +75,21 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Gestion des entrées clavier
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            player.move(0.0f, 1.0f, *globalMap); // Haut
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            player.move(0.0f, -1.0f, *globalMap); // Bas
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            player.move(-1.0f, 0.0f, *globalMap); // Gauche
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            player.move(1.0f, 0.0f, *globalMap); // Droite
+        }
+
+        // Dessiner la scène
         drawScene();
 
         glfwSwapBuffers(window);

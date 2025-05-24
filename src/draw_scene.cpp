@@ -1,10 +1,13 @@
 #include "draw_scene.hpp"
 #include <iostream>
 #include "glbasimac/glbi_convex_2D_shape.hpp"
+#include "player.hpp" // Inclure la classe Player
 
 GLBI_Convex_2D_Shape carre;
 
 TileMap *globalMap = nullptr;
+
+extern Player player; // Déclarer le joueur comme global (ou passez-le en paramètre)
 
 void initScene()
 {
@@ -70,6 +73,12 @@ void drawScene()
             }
         }
     }
+
+    // Dessiner le joueur
+    float playerSize = 2.0f / globalMap->getWidth(); // Taille du joueur (identique à celle des cases)
+    drawSquare(player.getX() * playerSize - 1.0f + playerSize / 2,
+               player.getY() * playerSize - 1.0f + playerSize / 2,
+               playerSize, 0.0f, 0.0f, 1.0f); // Bleu pour le joueur
 
     glFlush();
 }

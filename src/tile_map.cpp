@@ -145,7 +145,7 @@ TileMap::TileMap(int width, int height)
         return count;
     }
 
-const Tile& TileMap::getTile(int x, int y) const {
+Tile& TileMap::getTile(int x, int y) {
     return map[y][x];
 }
 

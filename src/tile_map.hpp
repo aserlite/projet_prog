@@ -24,7 +24,8 @@ class TileMap {
 public:
     TileMap(int width, int height);
     void generateProceduralMap(float fillProbability, int iterations);
-    const Tile& getTile(int x, int y) const;
+    const Tile& getTile(int x, int y) const; // Version constante
+    Tile& getTile(int x, int y);             // Version non-constante
     int getWidth() const;
     int getHeight() const;
 
