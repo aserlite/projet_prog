@@ -54,7 +54,6 @@ void Player::move(float dx, float dy, TileMap &map)
     collect(map);
 }
 
-
 void Player::mine(TileMap &map)
 {
     int startX, endX, startY, endY;
@@ -98,19 +97,14 @@ void Player::mine(TileMap &map)
             if (tileX >= 0 && tileX < map.getWidth() && tileY >= 0 && tileY < map.getHeight())
             {
                 TileType tileType = map.getTile(tileX, tileY).getType();
-                std::cout << "Bloc en contact à (" << tileX << ", " << tileY << ") : " << static_cast<int>(tileType) << std::endl;
-
                 if (tileType == TileType::Solid)
                 {
                     map.getTile(tileX, tileY) = Tile(TileType::Empty);
-                    std::cout << "Bloc miné à (" << tileX << ", " << tileY << ")" << std::endl;
                 }
             }
         }
     }
 }
-
-
 
 void Player::collect(TileMap &map)
 {
@@ -131,6 +125,12 @@ void Player::collect(TileMap &map)
                     map.getTile(tileX, tileY) = Tile(TileType::Empty);
                     score++;
                     std::cout << "Objet collecté à (" << tileX << ", " << tileY << "). Score : " << score << std::endl;
+
+                    if (allObjectsCollected(map)) {
+                        // Il faut ajouter un écran de fin
+
+                        std::cout << "Bravo ! Vous avez collecté tous les objets !" << std::endl;
+                    }
                 }
             }
         }
@@ -140,4 +140,15 @@ void Player::collect(TileMap &map)
 int Player::getScore() const
 {
     return score;
+}
+
+bool Player::allObjectsCollected(TileMap& map) const {
+    for (int y = 0; y < map.getHeight(); ++y) {
+        for (int x = 0; x < map.getWidth(); ++x) {
+            if (map.getTile(x, y).getType() == TileType::Object) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
