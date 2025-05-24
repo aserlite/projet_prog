@@ -3,6 +3,8 @@
 #include "tile_map.hpp"
 #include <string>
 
+enum class Direction { Up, Down, Left, Right };
+
 class Player
 {
 public:
@@ -19,6 +21,9 @@ public:
     const std::string &getSpritePath() const;
     int getScore() const; // Récupérer le score
 
+    void setDirection(Direction dir) { direction = dir; }
+    Direction getDirection() const { return direction; }
+
 private:
     float x;                // Position X du joueur (en coordonnées flottantes)
     float y;                // Position Y du joueur (en coordonnées flottantes)
@@ -26,4 +31,5 @@ private:
     float size = 1.9f;      // Taille du joueur (carré de 10x10 pixels)
     std::string spritePath; // Chemin vers le sprite du joueur
     int score = 0;          // Compteur de points
+    Direction direction = Direction::Down;
 };

@@ -77,16 +77,24 @@ int main() {
 
         // Gestion des entrées clavier
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            player.setDirection(Direction::Up);
             player.move(0.0f, 1.0f, *globalMap); // Haut
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            player.setDirection(Direction::Down);
             player.move(0.0f, -1.0f, *globalMap); // Bas
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            player.setDirection(Direction::Left);
             player.move(-1.0f, 0.0f, *globalMap); // Gauche
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            player.setDirection(Direction::Right);
             player.move(1.0f, 0.0f, *globalMap); // Droite
+        }
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+            std::cout << "Mining at (" << player.getX() << ", " << player.getY() << ")" << std::endl;
+            player.mine(*globalMap);
         }
 
         // Dessiner la scène
