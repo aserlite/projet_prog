@@ -34,38 +34,42 @@ void drawSquare(float x, float y, float size, float r, float g, float b)
 
 void drawScene()
 {
-    glClearColor(0.0f, 0.f, 0.0f, 1.0f); // Fond noir
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Fond noir
     glClear(GL_COLOR_BUFFER_BIT);
     myEngine.mvMatrixStack.loadIdentity();
     myEngine.updateMvMatrix();
-    carre.drawShape(); // Dessin du carré de base
 
     if (globalMap != nullptr) {
         int rows = globalMap->getHeight();
         int cols = globalMap->getWidth();
 
-        float cellW = 2.0f / cols; // Largeur d'une cellule
-        float cellH = 2.0f / rows; // Hauteur d'une cellule
+        // Ajustement de la taille des cellules pour que la carte tienne dans la fenêtre
+        float cellW = 2.0f / cols; // Largeur d'une cellule (normalisée pour OpenGL)
+        float cellH = 2.0f / rows; // Hauteur d'une cellule (normalisée pour OpenGL)
 
         for (int y = 0; y < rows; ++y) {
             for (int x = 0; x < cols; ++x) {
                 TileType type = globalMap->getTile(x, y).getType();
 
-                float x1 = -1.0f + x * cellW;
-                float y1 = -1.0f + y * cellH;
+                // Calcul des coordonnées de la cellule
+                float x1 = -1.0f + x * cellW; // Coordonnée X de la cellule
+                float y1 = -1.0f + y * cellH; // Coordonnée Y de la cellule
 
+                // Dessin de la cellule en fonction de son type
                 if (type == TileType::Solid) {
-                    drawSquare(x1, y1, cellW, 0.5f, 0.3f, 0.1f); // Marron (mur)
+                    drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.5f, 0.3f, 0.1f); // Marron (mur)
                 } else if (type == TileType::Empty) {
-                    drawSquare(x1, y1, cellW, 0.8f, 0.8f, 0.8f); // Gris clair (vide)
+                    drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.8f, 0.8f, 0.8f); // Gris clair (vide)
                 } else if (type == TileType::Object) {
-                    drawSquare(x1, y1, cellW, 0.0f, 1.0f, 0.0f); // Vert (objet)
+                    drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.0f, 1.0f, 0.0f); // Vert (objet)
                 } else if (type == TileType::Trap) {
-                    drawSquare(x1, y1, cellW, 1.0f, 0.0f, 0.0f); // Rouge (piège)
+                    drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 1.0f, 0.0f, 0.0f); // Rouge (piège)
                 } else {
-                    drawSquare(x1, y1, cellW, 0.2f, 0.2f, 0.2f); // Couleur par défaut
+                    drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.2f, 0.2f, 0.2f); // Couleur par défaut
                 }
             }
         }
     }
+
+    glFlush();
 }

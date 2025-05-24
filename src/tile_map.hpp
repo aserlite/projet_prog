@@ -31,5 +31,6 @@ private:
     int width;
     int height;
     std::vector<std::vector<Tile>> map;
+    void fillEnclosedEmptySpaces();
     int countFilledNeighbors(int x, int y) const;
 };
