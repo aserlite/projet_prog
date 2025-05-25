@@ -149,6 +149,10 @@ Tile& TileMap::getTile(int x, int y) {
     return map[y][x];
 }
 
+const Tile& TileMap::getTile(int x, int y) const {
+    return map[y][x];
+}
+
 int TileMap::getWidth() const {
     return width;
 }

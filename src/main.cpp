@@ -2,9 +2,13 @@
 #include "tile_map.hpp"
 #include "draw_scene.hpp"
 #include "player.hpp"
+#include "enemy.hpp"
+#include "flow_field.hpp"
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 #include <iostream>
+#include <vector>
+#include <chrono>
 
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 800;
@@ -34,6 +38,9 @@ void onWindowResized(GLFWwindow* /*window*/, int width, int height) {
 }
 
 Player player(1.0f, 1.0f, 0.1f, "player_sprite.png"); // Déclaration globale
+
+std::vector<Enemy> enemies;
+std::vector<std::vector<std::pair<int, int>>> flowField;
 
 int main() {
     // Initialisation de GLFW
@@ -75,6 +82,10 @@ int main() {
     map->generateProceduralMap(0.475f, 4);
     globalMap = map; 
 
+    enemies.emplace_back(5.0f, 5.0f, 2.0f, "enemy_sprite.png");
+    enemies.emplace_back(10.0f, 40.0f, 1.5f, "enemy_sprite.png");
+    enemies.emplace_back(40.0f, 10.0f, 1.0f, "enemy_sprite.png");
+
     initScene();
     // Boucle principale
     while (!glfwWindowShouldClose(window)) {
@@ -101,6 +112,27 @@ int main() {
             player.mine(*globalMap);
         }
 
+        static int lastPlayerX = -1, lastPlayerY = -1;
+        static auto lastTime = std::chrono::high_resolution_clock::now();
+
+        int playerX = static_cast<int>(player.getX());
+        int playerY = static_cast<int>(player.getY());
+        if (playerX != lastPlayerX || playerY != lastPlayerY || flowField.empty()) {
+            flowField = computeFlowField(*globalMap, playerX, playerY);
+            lastPlayerX = playerX;
+            lastPlayerY = playerY;
+        }
+
+        // Calcul du deltaTime
+        auto now = std::chrono::high_resolution_clock::now();
+        float deltaTime = std::chrono::duration<float>(now - lastTime).count();
+        lastTime = now;
+
+        // Mise à jour des ennemis
+        for (auto& enemy : enemies) {
+            enemy.update(deltaTime, *globalMap, flowField);
+        }
+
         // Dessiner la scène
         drawScene();
 
@@ -114,3 +146,13 @@ int main() {
     glfwTerminate();
     return 0;
 }
+
+
+// TODO: 
+// - ajouter les ennemis 
+// - ajouter algo de pathfinding
+// - afficher score
+// - afficher le temps
+// - ajouter un menu au debut 
+// - ajouter un écran de fin
+// - ajouter les textures
