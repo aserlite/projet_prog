@@ -36,8 +36,7 @@ void onWindowResized(GLFWwindow* /*window*/, int width, int height) {
                                  GL_VIEW_SIZE / (2.0 * aspectRatio));
     }
 }
-
-Player player(1.0f, 1.0f, 0.1f, "player_sprite.png"); // Déclaration globale
+Player player(0, 0, 0.1f, "player_sprite.png"); // valeurs temporaires, écrasées juste après
 
 std::vector<Enemy> enemies;
 std::vector<std::vector<std::pair<int, int>>> flowField;
@@ -81,10 +80,16 @@ int main() {
     TileMap* map = new TileMap(50, 50);
     map->generateProceduralMap(0.475f, 4);
     globalMap = map; 
+        
+    auto [spawnX, spawnY] = findSafeSpawn(*map, 2); // rayon 2 cases autour du joueur
+    player = Player(spawnX, spawnY, 0.1f, "player_sprite.png");
 
-    enemies.emplace_back(5.0f, 5.0f, 2.0f, "enemy_sprite.png");
-    enemies.emplace_back(10.0f, 40.0f, 1.5f, "enemy_sprite.png");
-    enemies.emplace_back(40.0f, 10.0f, 1.0f, "enemy_sprite.png");
+    float minDistance = 15.0f;
+    for (int i = 0; i < 3; ++i) {
+        auto [ex, ey] = getRandomFarPosition(*map, minDistance, player.getX(), player.getY());
+        enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "enemy_sprite.png");
+    }
+
 
     initScene();
     // Boucle principale
@@ -123,7 +128,7 @@ int main() {
             lastPlayerY = playerY;
         }
 
-        // Calcul du deltaTime
+        // Calcul du deltaTime pour les ennemis
         auto now = std::chrono::high_resolution_clock::now();
         float deltaTime = std::chrono::duration<float>(now - lastTime).count();
         lastTime = now;
@@ -132,6 +137,8 @@ int main() {
         for (auto& enemy : enemies) {
             enemy.update(deltaTime, *globalMap, flowField);
         }
+
+        player.checkEnemyCollision(enemies);
 
         // Dessiner la scène
         drawScene();
@@ -149,7 +156,7 @@ int main() {
 
 
 // TODO: 
-// - ajouter les ennemis 
+// - ajouter les ennemis (a perfectionner)
 // - ajouter algo de pathfinding
 // - afficher score
 // - afficher le temps

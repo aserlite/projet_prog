@@ -97,7 +97,7 @@ TileMap::TileMap(int width, int height)
                 if (map[y][x].getType() == TileType::Empty) {
                     if (dis(gen) < 0.03) {
                         map[y][x] = Tile(TileType::Object); // Ajouter un objet
-                    } else if (dis(gen) < 0.02) {
+                    } else if (dis(gen) < 0.01) {
                         map[y][x] = Tile(TileType::Trap); // Ajouter un piège
                     }
                 }

@@ -1,5 +1,7 @@
 #include "player.hpp"
 #include <iostream>
+#include <random>
+#include <cmath>
 
 Player::Player(float x, float y, float speed, const std::string &spritePath)
     : x(x), y(y), speed(speed), spritePath(spritePath) {}
@@ -52,6 +54,7 @@ void Player::move(float dx, float dy, TileMap &map)
 
     // Vérification de collecte
     collect(map);
+    checkTrap(map);
 }
 
 void Player::mine(TileMap &map)
@@ -137,6 +140,59 @@ void Player::collect(TileMap &map)
     }
 }
 
+void Player::checkTrap(TileMap& map)
+{
+    int startX = static_cast<int>(x);
+    int endX = static_cast<int>(x + size);
+    int startY = static_cast<int>(y);
+    int endY = static_cast<int>(y + size);
+
+    for (int tileX = startX; tileX <= endX; ++tileX)
+    {
+        for (int tileY = startY; tileY <= endY; ++tileY)
+        {
+            if (tileX >= 0 && tileX < map.getWidth() && tileY >= 0 && tileY < map.getHeight())
+            {
+                TileType tileType = map.getTile(tileX, tileY).getType();
+                if (tileType == TileType::Trap)
+                {
+                    std::cout << "Vous êtes tombé dans un piège ! GAME OVER." << std::endl;
+                    std::exit(EXIT_FAILURE); // Termine le programme
+                }
+            }
+        }
+    }
+}
+
+void Player::checkEnemyCollision(const std::vector<Enemy>& enemies)
+{
+    // Rectangle du joueur
+    float playerLeft   = x;
+    float playerRight  = x + size;
+    float playerTop    = y + size;
+    float playerBottom = y;
+
+    for (const auto& enemy : enemies) {
+        float enemySize = size; // ou adapte si les ennemis sont plus petits
+        float ex = enemy.getX();
+        float ey = enemy.getY();
+
+        float enemyLeft   = ex;
+        float enemyRight  = ex + enemySize;
+        float enemyTop    = ey + enemySize;
+        float enemyBottom = ey;
+
+        // Collision AABB
+        bool collision = playerLeft < enemyRight && playerRight > enemyLeft &&
+                         playerBottom < enemyTop && playerTop > enemyBottom;
+
+        if (collision) {
+            std::cout << "Un ennemi vous a attrapé ! GAME OVER." << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+    }
+}
+
 int Player::getScore() const
 {
     return score;
@@ -151,4 +207,45 @@ bool Player::allObjectsCollected(TileMap& map) const {
         }
     }
     return true;
+}
+
+std::pair<float, float> findSafeSpawn(TileMap& map, int radius) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distX(radius, map.getWidth() - radius - 1);
+    std::uniform_int_distribution<> distY(radius, map.getHeight() - radius - 1);
+
+    for (int tries = 0; tries < 1000; ++tries) {
+        int x = distX(gen);
+        int y = distY(gen);
+
+        // Vérifie que la zone autour est "safe"
+        bool safe = true;
+        for (int dx = -radius; dx <= radius && safe; ++dx) {
+            for (int dy = -radius; dy <= radius && safe; ++dy) {
+                int nx = x + dx;
+                int ny = y + dy;
+                if (nx < 0 || nx >= map.getWidth() || ny < 0 || ny >= map.getHeight())
+                    continue;
+                TileType t = map.getTile(nx, ny).getType();
+                if (t == TileType::Trap || t == TileType::Object || t == TileType::Solid || t == TileType::Obstacle)
+                    safe = false;
+            }
+        }
+        if (safe) {
+            // Nettoie la zone autour (transforme tout en Empty)
+            for (int dx = -radius; dx <= radius; ++dx) {
+                for (int dy = -radius; dy <= radius; ++dy) {
+                    int nx = x + dx;
+                    int ny = y + dy;
+                    if (nx < 0 || nx >= map.getWidth() || ny < 0 || ny >= map.getHeight())
+                        continue;
+                    map.getTile(nx, ny) = Tile(TileType::Empty);
+                }
+            }
+            return {static_cast<float>(x), static_cast<float>(y)};
+        }
+    }
+
+    return {static_cast<float>(radius), static_cast<float>(radius)};
 }

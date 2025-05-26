@@ -16,3 +16,5 @@ private:
     float speed;
     std::string spritePath;
 };
+
+std::pair<float, float> getRandomFarPosition(const TileMap& map, float minDistance, float playerX, float playerY);

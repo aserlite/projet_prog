@@ -1,5 +1,6 @@
 #pragma once
 
+#include "enemy.hpp"
 #include "tile_map.hpp"
 #include <string>
 
@@ -14,6 +15,8 @@ public:
     void move(float dx, float dy, TileMap &map); // Déplacement du joueur
     void mine(TileMap &map);                     // Miner un bloc
     void collect(TileMap &map);                  // Collecter un objet
+    void checkTrap(TileMap& map);
+    void checkEnemyCollision(const std::vector<Enemy>& enemies);
 
     // Accesseurs
     float getX() const;
@@ -26,6 +29,7 @@ public:
     void setDirection(Direction dir) { direction = dir; }
     Direction getDirection() const { return direction; }
 
+
 private:
     float x;                // Position X du joueur (en coordonnées flottantes)
     float y;                // Position Y du joueur (en coordonnées flottantes)
@@ -35,3 +39,5 @@ private:
     int score = 0;          // Compteur de points
     Direction direction = Direction::Down;
 };
+
+std::pair<float, float> findSafeSpawn(TileMap& map, int radius = 2);
