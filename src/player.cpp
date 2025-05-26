@@ -133,6 +133,7 @@ void Player::collect(TileMap &map)
                         // Il faut ajouter un écran de fin
 
                         std::cout << "Bravo ! Vous avez collecté tous les objets !" << std::endl;
+                        std::exit(EXIT_FAILURE); // Termine le programme
                     }
                 }
             }

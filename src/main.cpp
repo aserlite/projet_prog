@@ -80,7 +80,7 @@ int main() {
     TileMap* map = new TileMap(50, 50);
     map->generateProceduralMap(0.475f, 4);
     globalMap = map; 
-        
+
     auto [spawnX, spawnY] = findSafeSpawn(*map, 2); // rayon 2 cases autour du joueur
     player = Player(spawnX, spawnY, 0.1f, "player_sprite.png");
 
@@ -156,7 +156,6 @@ int main() {
 
 
 // TODO: 
-// - ajouter les ennemis (a perfectionner)
 // - ajouter algo de pathfinding
 // - afficher score
 // - afficher le temps
