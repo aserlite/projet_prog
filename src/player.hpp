@@ -31,10 +31,10 @@ public:
 
 
 private:
-    float x;                // Position X du joueur (en coordonnées flottantes)
-    float y;                // Position Y du joueur (en coordonnées flottantes)
+    float x;                // Position X du joueur
+    float y;                // Position Y du joueur
     float speed;            // Vitesse de déplacement
-    float size = 1.9f;      // Taille du joueur (carré de 10x10 pixels)
+    float size = 1.9f;      // Taille du joueur
     std::string spritePath; // Chemin vers le sprite du joueur
     int score = 0;          // Compteur de points
     Direction direction = Direction::Down;

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <random>
 #include <cmath>
+#include "texture_manager.hpp"
 
 Player::Player(float x, float y, float speed, const std::string &spritePath)
     : x(x), y(y), speed(speed), spritePath(spritePath) {}

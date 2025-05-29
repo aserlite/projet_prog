@@ -1,16 +1,20 @@
 #include "draw_scene.hpp"
 #include <iostream>
 #include "glbasimac/glbi_convex_2D_shape.hpp"
-#include "player.hpp" // Inclure la classe Player
+#include "player.hpp"
 #include "enemy.hpp"
 #include <vector>
+#include "texture_manager.hpp"
 
 GLBI_Convex_2D_Shape carre;
 
 TileMap *globalMap = nullptr;
 
-extern Player player; // Déclarer le joueur comme global (ou passez-le en paramètre)
+extern Player player;
 extern std::vector<Enemy> enemies;
+
+Texture playerTexture;
+Texture enemyTexture;
 
 void initScene()
 {
@@ -20,15 +24,15 @@ void initScene()
         1.0f , 1.0f ,   // Coin supérieur droit
         -1.0f , 1.0f    // Coin supérieur gauche
     };
-
     carre.initShape(carrePoints);
     carre.changeNature(GL_TRIANGLE_FAN);
+
+    playerTexture.loadFromFile("assets/images/player.png");
+    enemyTexture.loadFromFile("assets/images/enemy.png");
 }
 
 void drawSquare(float x, float y, float size, float r, float g, float b)
 {
-    // std::cout << "Drawing square at (" << x << ", " << y << ") with size " << size << std::endl;
-
     myEngine.mvMatrixStack.pushMatrix();
     myEngine.mvMatrixStack.addTranslation({x, y, 0.0f});
     myEngine.mvMatrixStack.addHomothety({size, size, 1.0f});
@@ -50,8 +54,8 @@ void drawScene()
         int cols = globalMap->getWidth();
 
         // Ajustement de la taille des cellules pour que la carte tienne dans la fenêtre
-        float cellW = 2.0f / cols; // Largeur d'une cellule (normalisée pour OpenGL)
-        float cellH = 2.0f / rows; // Hauteur d'une cellule (normalisée pour OpenGL)
+        float cellW = 2.0f / cols;
+        float cellH = 2.0f / rows;
 
         for (int y = 0; y < rows; ++y) {
             for (int x = 0; x < cols; ++x) {
@@ -78,10 +82,12 @@ void drawScene()
     }
 
     // Dessiner le joueur
-    float playerSize = 2.0f / globalMap->getWidth(); // Taille du joueur (identique à celle des cases)
+    playerTexture.attachTexture();
+    float playerSize = 2.0f / globalMap->getWidth(); 
     drawSquare(player.getX() * playerSize - 1.0f + playerSize / 2,
                player.getY() * playerSize - 1.0f + playerSize / 2,
                playerSize, 0.0f, 0.0f, 1.0f); // Bleu pour le joueur
+    playerTexture.detachTexture();
 
     // Dessiner les ennemis
     float enemySize = 2.0f / globalMap->getWidth();

@@ -4,8 +4,8 @@
 #include "player.hpp"
 #include "enemy.hpp"
 #include "flow_field.hpp"
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -36,7 +36,7 @@ void onWindowResized(GLFWwindow* /*window*/, int width, int height) {
                                  GL_VIEW_SIZE / (2.0 * aspectRatio));
     }
 }
-Player player(0, 0, 0.1f, "player_sprite.png"); // valeurs temporaires, écrasées juste après
+Player player(0, 0, 0.1f, "assets/images/kawai.jpg"); // valeurs temporaires, écrasées juste après
 
 std::vector<Enemy> enemies;
 std::vector<std::vector<std::pair<int, int>>> flowField;
@@ -82,7 +82,7 @@ int main() {
     globalMap = map; 
 
     auto [spawnX, spawnY] = findSafeSpawn(*map, 2); // rayon 2 cases autour du joueur
-    player = Player(spawnX, spawnY, 0.1f, "player_sprite.png");
+    player = Player(spawnX, spawnY, 0.1f, "assets/images/kawai.jpg");
 
     float minDistance = 15.0f;
     for (int i = 0; i < 3; ++i) {
@@ -156,9 +156,9 @@ int main() {
 
 
 // TODO: 
-// - ajouter algo de pathfinding
 // - afficher score
 // - afficher le temps
 // - ajouter un menu au debut 
 // - ajouter un écran de fin
 // - ajouter les textures
+
