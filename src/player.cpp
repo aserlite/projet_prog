@@ -4,8 +4,8 @@
 #include <cmath>
 #include "texture_manager.hpp"
 
-Player::Player(float x, float y, float speed, const std::string &spritePath)
-    : x(x), y(y), speed(speed), spritePath(spritePath) {}
+Player::Player(float x, float y, float speed)
+    : x(x), y(y), speed(speed) {}
 
 float Player::getX() const
 {
@@ -129,13 +129,6 @@ void Player::collect(TileMap &map)
                     map.getTile(tileX, tileY) = Tile(TileType::Empty);
                     score++;
                     std::cout << "Objet collecté à (" << tileX << ", " << tileY << "). Score : " << score << std::endl;
-
-                    if (allObjectsCollected(map)) {
-                        // Il faut ajouter un écran de fin
-
-                        std::cout << "Bravo ! Vous avez collecté tous les objets !" << std::endl;
-                        std::exit(EXIT_FAILURE); // Termine le programme
-                    }
                 }
             }
         }
@@ -156,11 +149,6 @@ void Player::checkTrap(TileMap& map)
             if (tileX >= 0 && tileX < map.getWidth() && tileY >= 0 && tileY < map.getHeight())
             {
                 TileType tileType = map.getTile(tileX, tileY).getType();
-                if (tileType == TileType::Trap)
-                {
-                    std::cout << "Vous êtes tombé dans un piège ! GAME OVER." << std::endl;
-                    std::exit(EXIT_FAILURE); // Termine le programme
-                }
             }
         }
     }
@@ -187,11 +175,6 @@ void Player::checkEnemyCollision(const std::vector<Enemy>& enemies)
         // Collision AABB
         bool collision = playerLeft < enemyRight && playerRight > enemyLeft &&
                          playerBottom < enemyTop && playerTop > enemyBottom;
-
-        if (collision) {
-            std::cout << "Un ennemi vous a attrapé ! GAME OVER." << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
     }
 }
 
@@ -209,6 +192,50 @@ bool Player::allObjectsCollected(TileMap& map) const {
         }
     }
     return true;
+}
+
+bool Player::isInTrap(TileMap& map) const {
+    int startX = static_cast<int>(x);
+    int endX = static_cast<int>(x + size);
+    int startY = static_cast<int>(y);
+    int endY = static_cast<int>(y + size);
+
+    for (int tileX = startX; tileX <= endX; ++tileX) {
+        for (int tileY = startY; tileY <= endY; ++tileY) {
+            if (tileX >= 0 && tileX < map.getWidth() && tileY >= 0 && tileY < map.getHeight()) {
+                TileType tileType = map.getTile(tileX, tileY).getType();
+                if (tileType == TileType::Trap) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Player::isInEnemy(const std::vector<Enemy>& enemies) const {
+    float playerLeft   = x;
+    float playerRight  = x + size;
+    float playerTop    = y + size;
+    float playerBottom = y;
+
+    for (const auto& enemy : enemies) {
+        float enemySize = 1.9f; // Taille de l'ennemi
+        float ex = enemy.getX();
+        float ey = enemy.getY();
+
+        float enemyLeft   = ex;
+        float enemyRight  = ex + enemySize;
+        float enemyTop    = ey + enemySize;
+        float enemyBottom = ey;
+
+        // Collision AABB
+        if (playerLeft < enemyRight && playerRight > enemyLeft &&
+            playerBottom < enemyTop && playerTop > enemyBottom) {
+            return true; // Collision avec un ennemi
+        }
+    }
+    return false; // Pas de collision avec un ennemi
 }
 
 std::pair<float, float> findSafeSpawn(TileMap& map, int radius) {

@@ -5,30 +5,53 @@
 #include "enemy.hpp"
 #include <vector>
 #include "texture_manager.hpp"
+#include "text.hpp"
 
-GLBI_Convex_2D_Shape carre;
+StandardMesh carre;
 
-TileMap *globalMap = nullptr;
+extern TileMap* globalMap;
 
 extern Player player;
 extern std::vector<Enemy> enemies;
 
 Texture playerTexture;
 Texture enemyTexture;
+Texture wallTexture;
+Texture obstacleTexture;
+Texture objectTexture;
+Texture trapTexture;
+Texture floorTexture;
+
 
 void initScene()
 {
-    std::vector<float> carrePoints = {
-        -1.0f , -1.0f, // Coin inférieur gauche
-        1.0f , -1.0f ,  // Coin inférieur droit
-        1.0f , 1.0f ,   // Coin supérieur droit
-        -1.0f , 1.0f    // Coin supérieur gauche
-    };
-    carre.initShape(carrePoints);
-    carre.changeNature(GL_TRIANGLE_FAN);
+    static float positions[] = {
+        -0.5f, -0.5f, // Bas gauche
+        0.5f, -0.5f,  // Bas droit
+        0.5f, 0.5f,   // Haut droit
+        -0.5f, 0.5f}; // Haut gauche
+
+    static float uvs[] = {
+        0.0f, 0.0f,  // Bas gauche
+        1.0f, 0.0f,  // Bas droit
+        1.0f, 1.0f,  // Haut droit
+        0.0f, 1.0f}; // Haut gauche
+
+    carre = StandardMesh(4, GL_TRIANGLE_FAN);
+    carre.setNbElt(4);
+    carre.addOneBuffer(0, 2, positions, "position", true);
+    carre.addOneBuffer(2, 2, uvs, "uvs", true);
+    carre.createVAO();
+
+    myEngine.activateTexturing(true);
 
     playerTexture.loadFromFile("assets/images/player.png");
     enemyTexture.loadFromFile("assets/images/enemy.png");
+    wallTexture.loadFromFile("assets/images/mur.png");
+    obstacleTexture.loadFromFile("assets/images/obstacle.png");
+    objectTexture.loadFromFile("assets/images/tomato.png");
+    trapTexture.loadFromFile("assets/images/piege.png");
+    floorTexture.loadFromFile("assets/images/sol.png");
 }
 
 void drawSquare(float x, float y, float size, float r, float g, float b)
@@ -38,7 +61,7 @@ void drawSquare(float x, float y, float size, float r, float g, float b)
     myEngine.mvMatrixStack.addHomothety({size, size, 1.0f});
     myEngine.updateMvMatrix();
     myEngine.setFlatColor(r, g, b);
-    carre.drawShape(); 
+    carre.draw();
     myEngine.mvMatrixStack.popMatrix();
 }
 
@@ -49,7 +72,8 @@ void drawScene()
     myEngine.mvMatrixStack.loadIdentity();
     myEngine.updateMvMatrix();
 
-    if (globalMap != nullptr) {
+    if (globalMap != nullptr)
+    {
         int rows = globalMap->getHeight();
         int cols = globalMap->getWidth();
 
@@ -57,8 +81,10 @@ void drawScene()
         float cellW = 2.0f / cols;
         float cellH = 2.0f / rows;
 
-        for (int y = 0; y < rows; ++y) {
-            for (int x = 0; x < cols; ++x) {
+        for (int y = 0; y < rows; ++y)
+        {
+            for (int x = 0; x < cols; ++x)
+            {
                 TileType type = globalMap->getTile(x, y).getType();
 
                 // Calcul des coordonnées de la cellule
@@ -66,16 +92,35 @@ void drawScene()
                 float y1 = -1.0f + y * cellH; // Coordonnée Y de la cellule
 
                 // Dessin de la cellule en fonction de son type
-                if (type == TileType::Solid) {
+                if (type == TileType::Solid)
+                {
+                    wallTexture.attachTexture();
                     drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.5f, 0.3f, 0.1f); // Marron (mur)
-                } else if (type == TileType::Empty) {
+                    wallTexture.detachTexture();
+                }
+                else if (type == TileType::Empty)
+                {
+                    floorTexture.attachTexture();
                     drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.8f, 0.8f, 0.8f); // Gris clair (vide)
-                } else if (type == TileType::Object) {
+                    floorTexture.detachTexture();
+                }
+                else if (type == TileType::Object)
+                {
+                    objectTexture.attachTexture();
                     drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.0f, 1.0f, 0.0f); // Vert (objet)
-                } else if (type == TileType::Trap) {
+                    objectTexture.detachTexture();
+                }
+                else if (type == TileType::Trap)
+                {
+                    trapTexture.attachTexture();
                     drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 1.0f, 0.0f, 0.0f); // Rouge (piège)
-                } else {
+                    trapTexture.detachTexture();
+                }
+                else
+                {
+                    obstacleTexture.attachTexture();
                     drawSquare(x1 + cellW / 2, y1 + cellH / 2, cellW, 0.2f, 0.2f, 0.2f); // Couleur par défaut
+                    obstacleTexture.detachTexture();
                 }
             }
         }
@@ -83,19 +128,38 @@ void drawScene()
 
     // Dessiner le joueur
     playerTexture.attachTexture();
-    float playerSize = 2.0f / globalMap->getWidth(); 
-    drawSquare(player.getX() * playerSize - 1.0f + playerSize / 2,
-               player.getY() * playerSize - 1.0f + playerSize / 2,
-               playerSize, 0.0f, 0.0f, 1.0f); // Bleu pour le joueur
+    float playerSize = 2.0f / globalMap->getWidth() * 2.0f; // Taille = 2 cases
+    float playerCellSize = 2.0f / globalMap->getWidth();
+    drawSquare(
+        player.getX() * playerCellSize - 1.0f + playerCellSize,
+        player.getY() * playerCellSize - 1.0f + playerCellSize,
+        playerSize, 0.0f, 0.0f, 1.0f
+    );
     playerTexture.detachTexture();
 
     // Dessiner les ennemis
-    float enemySize = 2.0f / globalMap->getWidth();
-    for (const auto& enemy : enemies) {
-        drawSquare(enemy.getX() * enemySize - 1.0f + enemySize / 2,
-                   enemy.getY() * enemySize - 1.0f + enemySize / 2,
-                   enemySize, 1.0f, 0.0f, 1.0f); // Magenta pour les ennemis
+    float enemySize = 2.0f / globalMap->getWidth() * 2.0f; // Taille = 2 cases
+    float enemyCellSize = 2.0f / globalMap->getWidth();
+    for (const auto &enemy : enemies)
+    {
+        enemyTexture.attachTexture();
+        drawSquare(
+            enemy.getX() * enemyCellSize - 1.0f + enemyCellSize,
+            enemy.getY() * enemyCellSize - 1.0f + enemyCellSize,
+            enemySize, 1.0f, 0.0f, 1.0f
+        );
+        enemyTexture.detachTexture();
     }
 
+    // // Affichage du score et du temps
+    // char scoreStr[64];
+    // snprintf(scoreStr, sizeof(scoreStr), "Score: %d", player.getScore());
+
+    // char timeStr[64];
+    // extern float gElapsedTime;
+    // snprintf(timeStr, sizeof(timeStr), "Temps: %.1fs", gElapsedTime);
+
+    // drawText(20, 20, scoreStr, 1.2f);
+    // drawText(600, 20, timeStr, 1.2f);
     glFlush();
 }

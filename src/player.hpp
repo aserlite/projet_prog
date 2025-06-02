@@ -9,7 +9,7 @@ enum class Direction { Up, Down, Left, Right };
 class Player
 {
 public:
-    Player(float x, float y, float speed, const std::string &spritePath);
+    Player(float x, float y, float speed);
 
     // Méthodes pour gérer le joueur
     void move(float dx, float dy, TileMap &map); // Déplacement du joueur
@@ -25,6 +25,8 @@ public:
     int getScore() const; // Récupérer le score
 
     bool allObjectsCollected(TileMap& map) const;
+    bool isInTrap(TileMap& map) const;
+    bool isInEnemy(const std::vector<Enemy>& enemies) const;
 
     void setDirection(Direction dir) { direction = dir; }
     Direction getDirection() const { return direction; }

@@ -29,6 +29,10 @@ bool Texture::loadFromFile(const std::string& path, bool flip) {
     GLenum format = (c == 4) ? GL_RGBA : GL_RGB;
     glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, data);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     stbi_image_free(data);
     std::cout << "[Texture] Chargée : " << path << " (" << w << "x" << h << ", c=" << c << ", id=" << texID << ")\n";
     return true;
