@@ -45,13 +45,12 @@ void initScene()
 
     myEngine.activateTexturing(true);
 
-    playerTexture.loadFromFile("assets/images/player.png");
-    enemyTexture.loadFromFile("assets/images/enemy.png");
-    wallTexture.loadFromFile("assets/images/mur.png");
-    obstacleTexture.loadFromFile("assets/images/obstacle.png");
-    objectTexture.loadFromFile("assets/images/tomato.png");
-    trapTexture.loadFromFile("assets/images/piege.png");
-    floorTexture.loadFromFile("assets/images/sol.png");
+    enemyTexture.loadFromFile("assets/textures/police_front.png");
+    wallTexture.loadFromFile("assets/textures/bush.png");
+    obstacleTexture.loadFromFile("assets/textures/mur.png");
+    objectTexture.loadFromFile("assets/textures/weed.png");
+    trapTexture.loadFromFile("assets/textures/pompe.png");
+    floorTexture.loadFromFile("assets/textures/sol.png");
 }
 
 void drawSquare(float x, float y, float size, float r, float g, float b)
@@ -127,8 +126,8 @@ void drawScene()
     }
 
     // Dessiner le joueur
-    playerTexture.attachTexture();
-    float playerSize = 2.0f / globalMap->getWidth() * 2.0f; // Taille = 2 cases
+    playerTexture.loadFromFile(player.getCurrentSprite());
+    playerTexture.attachTexture();    float playerSize = 2.0f / globalMap->getWidth() * 2.0f; // Taille = 2 cases
     float playerCellSize = 2.0f / globalMap->getWidth();
     drawSquare(
         player.getX() * playerCellSize - 1.0f + playerCellSize,

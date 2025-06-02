@@ -35,7 +35,7 @@ void runGameLoop(GLFWwindow* window) {
             glfwPollEvents();
             if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
                 setStartScreenActive(false);
-                TileMap* newMap = new TileMap(40, 40);
+                TileMap* newMap = new TileMap(35, 35);
                 newMap->generateProceduralMap(0.475f, 4);
                 delete globalMap;
                 globalMap = newMap;
@@ -45,7 +45,7 @@ void runGameLoop(GLFWwindow* window) {
                 float minDistance = 15.0f;
                 for (int i = 0; i < 3; ++i) {
                     auto [ex, ey] = getRandomFarPosition(*globalMap, minDistance, player.getX(), player.getY());
-                    enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "enemy_sprite.png");
+                    enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "police_front.png");
                 }
                 setGameOverScreenActive(false);
                 startTime = std::chrono::high_resolution_clock::now();
@@ -59,7 +59,7 @@ void runGameLoop(GLFWwindow* window) {
             glfwSwapBuffers(window);
             glfwPollEvents();
             if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-                TileMap* newMap = new TileMap(40, 40);
+                TileMap* newMap = new TileMap(35, 35);
                 newMap->generateProceduralMap(0.475f, 4);
                 delete globalMap;
                 globalMap = newMap;
@@ -69,7 +69,7 @@ void runGameLoop(GLFWwindow* window) {
                 float minDistance = 15.0f;
                 for (int i = 0; i < 3; ++i) {
                     auto [ex, ey] = getRandomFarPosition(*globalMap, minDistance, player.getX(), player.getY());
-                    enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "enemy_sprite.png");
+                    enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "police_front.png");
                 }
                 setGameOverScreenActive(false);
                 startTime = std::chrono::high_resolution_clock::now();

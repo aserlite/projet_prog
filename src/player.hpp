@@ -30,7 +30,7 @@ public:
 
     void setDirection(Direction dir) { direction = dir; }
     Direction getDirection() const { return direction; }
-
+    const std::string& getCurrentSprite() const;
 
 private:
     float x;                // Position X du joueur
@@ -40,6 +40,7 @@ private:
     std::string spritePath; // Chemin vers le sprite du joueur
     int score = 0;          // Compteur de points
     Direction direction = Direction::Down;
+    std::string spriteUp, spriteDown, spriteLeft, spriteRight;
 };
 
 std::pair<float, float> findSafeSpawn(TileMap& map, int radius = 2);

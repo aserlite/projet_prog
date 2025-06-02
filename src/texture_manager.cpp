@@ -34,7 +34,6 @@ bool Texture::loadFromFile(const std::string& path, bool flip) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     stbi_image_free(data);
-    std::cout << "[Texture] Chargée : " << path << " (" << w << "x" << h << ", c=" << c << ", id=" << texID << ")\n";
     return true;
 }
 

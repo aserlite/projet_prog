@@ -74,21 +74,8 @@ int main() {
     myEngine.initGL();
     onWindowResized(window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    // Initialisation de la carte et du joueur
-    TileMap* map = new TileMap(40, 40);
-    map->generateProceduralMap(0.475f, 4);
-    globalMap = map;
-    auto [spawnX, spawnY] = findSafeSpawn(*map, 2);
-    player = Player(spawnX, spawnY, 0.1f);
-    float minDistance = 15.0f;
-    for (int i = 0; i < 3; ++i) {
-        auto [ex, ey] = getRandomFarPosition(*map, minDistance, player.getX(), player.getY());
-        enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "enemy_sprite.png");
-    }
-
     runGameLoop(window);
 
-    delete map;
     quitText();
     glfwTerminate();
     return 0;

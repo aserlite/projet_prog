@@ -5,7 +5,12 @@
 #include "texture_manager.hpp"
 
 Player::Player(float x, float y, float speed)
-    : x(x), y(y), speed(speed) {}
+    : x(x), y(y), speed(speed),
+      spriteUp("assets/textures/player_up.png"),
+      spriteDown("assets/textures/player_down.png"),
+      spriteLeft("assets/textures/player_left.png"),
+      spriteRight("assets/textures/player_right.png")
+{}
 
 float Player::getX() const
 {
@@ -277,4 +282,14 @@ std::pair<float, float> findSafeSpawn(TileMap& map, int radius) {
     }
 
     return {static_cast<float>(radius), static_cast<float>(radius)};
+}
+
+const std::string& Player::getCurrentSprite() const {
+    switch (direction) {
+        case Direction::Up: return spriteUp;
+        case Direction::Down: return spriteDown;
+        case Direction::Left: return spriteLeft;
+        case Direction::Right: return spriteRight;
+        default: return spriteDown;
+    }
 }
