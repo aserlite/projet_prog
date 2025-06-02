@@ -5,6 +5,7 @@
 #include "flow_field.hpp"
 #include "start_screen.hpp"
 #include "game_over_screen.hpp"
+#include "win_screen.hpp"
 #include <chrono>
 #include <iostream>
 
@@ -80,6 +81,33 @@ void runGameLoop(GLFWwindow* window) {
             continue;
         }
 
+        // --- Win Screen ---
+        if (isWinScreenActive()) {
+            drawWinScreen(player.getScore(), elapsedTime);
+            glfwSwapBuffers(window);
+            glfwPollEvents();
+            if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+                TileMap* newMap = new TileMap(35, 35);
+                newMap->generateProceduralMap(0.475f, 4);
+                delete globalMap;
+                globalMap = newMap;
+                auto [spawnX, spawnY] = findSafeSpawn(*globalMap, 2);
+                player = Player(spawnX, spawnY, 0.1f);
+                enemies.clear();
+                float minDistance = 15.0f;
+                for (int i = 0; i < 3; ++i) {
+                    auto [ex, ey] = getRandomFarPosition(*globalMap, minDistance, player.getX(), player.getY());
+                    enemies.emplace_back(ex, ey, 1.5f + 0.5f * i, "police_front.png");
+                }
+                setWinScreenActive(false);
+                startTime = std::chrono::high_resolution_clock::now();
+            }
+            if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+                break;
+            }
+            continue;
+        }
+
         // Gestion des entrées clavier
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
             player.setDirection(Direction::Up);
@@ -139,7 +167,7 @@ void runGameLoop(GLFWwindow* window) {
             std::cout << "Tous les objets sont collectés !" << std::endl;
             std::cout << "Score final : " << player.getScore() << std::endl;
             std::cout << "Temps écoulé : " << elapsedTime << " secondes" << std::endl;
-            setGameOverScreenActive(true);
+            setWinScreenActive(true);
         }
 
         elapsedTime = std::chrono::duration<float>(now - startTime).count();

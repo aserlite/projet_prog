@@ -16,8 +16,6 @@ void drawGameOverScreen(int score, float timeSeconds) {
     myEngine.updateMvMatrix();
 
     // drawText(200, 350, "GAME OVER", 2.0f); 
-    
-
 }
 
 bool isGameOverScreenActive() {
