@@ -78,10 +78,3 @@ int main() {
     glfwTerminate();
     return 0;
 }
-
-
-// TODO: 
-// - afficher score
-// - afficher le temps
-// - ajouter un menu au debut 
-// - ajouter un écran de fin

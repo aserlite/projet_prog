@@ -61,7 +61,6 @@ void drawSquare(float x, float y, float size, float r, float g, float b)
     myEngine.setFlatColor(r, g, b);
     carre.draw();
     myEngine.mvMatrixStack.popMatrix();
-    std::cout << "Square drawn." << std::endl;
 }
 
 void drawScene()
@@ -87,10 +86,10 @@ void drawScene()
                 TileType type = globalMap->getTile(x, y).getType();
 
                 // Calcul des coordonnées de la cellule
-                float x1 = -1.0f + x * cellW; // Coordonnée X de la cellule
-                float y1 = -1.0f + y * cellH; // Coordonnée Y de la cellule
+                float x1 = -1.0f + x * cellW; // X 
+                float y1 = -1.0f + y * cellH; // Y
 
-                // Dessin de la cellule en fonction de son type
+                // Dessin de la cellule
                 if (type == TileType::Solid)
                 {
                     wallTexture.attachTexture();
@@ -149,16 +148,5 @@ void drawScene()
         );
         enemyTexture.detachTexture();
     }
-
-    // // // Affichage du score et du temps
-    // char scoreStr[64];
-    // snprintf(scoreStr, sizeof(scoreStr), "Score: %d", player.getScore());
-
-    // char timeStr[64];
-    // extern float gElapsedTime;
-    // snprintf(timeStr, sizeof(timeStr), "Temps: %.1fs", gElapsedTime);
-
-    // drawText(20, 20, scoreStr, 1.2f);
-    // drawText(600, 20, timeStr, 1.2f);
     glFlush();
 }

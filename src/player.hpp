@@ -11,18 +11,16 @@ class Player
 public:
     Player(float x, float y, float speed);
 
-    // Méthodes pour gérer le joueur
-    void move(float dx, float dy, TileMap &map); // Déplacement du joueur
-    void mine(TileMap &map);                     // Miner un bloc
-    void collect(TileMap &map);                  // Collecter un objet
+    void move(float dx, float dy, TileMap &map);
+    void mine(TileMap &map);
+    void collect(TileMap &map);
     void checkTrap(TileMap& map);
     void checkEnemyCollision(const std::vector<Enemy>& enemies);
 
-    // Accesseurs
     float getX() const;
     float getY() const;
     const std::string &getSpritePath() const;
-    int getScore() const; // Récupérer le score
+    int getScore() const; 
 
     bool allObjectsCollected(TileMap& map) const;
     bool isInTrap(TileMap& map) const;
@@ -33,12 +31,12 @@ public:
     const std::string& getCurrentSprite() const;
 
 private:
-    float x;                // Position X du joueur
-    float y;                // Position Y du joueur
-    float speed;            // Vitesse de déplacement
-    float size = 1.9f;      // Taille du joueur
-    std::string spritePath; // Chemin vers le sprite du joueur
-    int score = 0;          // Compteur de points
+    float x;
+    float y;
+    float speed;
+    float size = 1.9f;
+    std::string spritePath;
+    int score = 0;
     Direction direction = Direction::Down;
     std::string spriteUp, spriteDown, spriteLeft, spriteRight;
 };

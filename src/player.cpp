@@ -54,11 +54,10 @@ void Player::move(float dx, float dy, TileMap &map)
         }
     }
 
-    // Si pas de collision, mise à jour de la position
     x = newX;
     y = newY;
 
-    // Vérification de collecte
+    // Vérification de collision
     collect(map);
     checkTrap(map);
 }
@@ -98,7 +97,6 @@ void Player::mine(TileMap &map)
         break;
     }
 
-    // Boucle sur la ligne/colonne de contact
     for (int tileX = startX; tileX <= endX; ++tileX)
     {
         for (int tileY = startY; tileY <= endY; ++tileY)
@@ -237,10 +235,10 @@ bool Player::isInEnemy(const std::vector<Enemy>& enemies) const {
         // Collision
         if (playerLeft < enemyRight && playerRight > enemyLeft &&
             playerBottom < enemyTop && playerTop > enemyBottom) {
-            return true; // Collision avec un ennemi
+            return true;
         }
     }
-    return false; // Pas de collision avec un ennemi
+    return false;
 }
 
 std::pair<float, float> findSafeSpawn(TileMap& map, int radius) {

@@ -48,7 +48,7 @@ void Enemy::update(float deltaTime, const TileMap& map, const std::vector<std::v
 
     if (len > 0.01f) {
         float move = speed * deltaTime;
-        if (move > len) move = len; // Ne pas dépasser la cible
+        if (move > len) move = len;
 
         // Tentative de déplacement
         float newX = x + (dx / len) * move;

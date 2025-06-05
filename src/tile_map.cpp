@@ -12,7 +12,7 @@ TileMap::TileMap(int width, int height)
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(0.0, 1.0);
 
-        // Étape 1 : Initialisation aléatoire de la carte avec un contour vide
+        // Initialisation aléatoire de la carte avec un contour vide
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
@@ -27,7 +27,7 @@ TileMap::TileMap(int width, int height)
             }
         }
 
-        // Étape 2 : Application des règles de cellular automata
+        // Application des règles de cellular automata
         for (int iter = 0; iter < iterations; ++iter) {
             std::vector<std::vector<Tile>> newMap = map;
 
@@ -54,13 +54,13 @@ TileMap::TileMap(int width, int height)
                 }
             }
 
-            map = newMap; // Mise à jour de la carte
+            map = newMap;
         }
 
-        // Étape supplémentaire : Remplir les espaces vides enfermés
+        // Remplir les espaces vides enfermés
         fillEnclosedEmptySpaces();
 
-        // **Nouvelle Étape** : Transformer les bordures intérieures des obstacles en blocs solides
+        // Transformer les bordures intérieures des obstacles en blocs solides
         for (int y = 1; y < height - 1; ++y) {
             for (int x = 1; x < width - 1; ++x) {
                 if (map[y][x].getType() == TileType::Obstacle) {
@@ -87,7 +87,7 @@ TileMap::TileMap(int width, int height)
             }
         }
 
-        // Étape 3 : Ajout d'objets, pièges et ennemis
+        // Ajout d'objets, pièges et ennemis
         for (int y = 0; y < height; ++y) {
             for (int x = 0; x < width; ++x) {
                 if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
@@ -104,7 +104,7 @@ TileMap::TileMap(int width, int height)
             }
         }
 
-        // Étape 4 : Affichage de la carte dans le terminal
+        // Affichage de la carte dans le terminal
         std::cout << "Generated Map:" << std::endl;
         for (int y = height - 1; y >= 0; --y) {
             for (int x = 0; x < width; ++x) {

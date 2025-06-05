@@ -4,11 +4,11 @@
 #include <vector>
 
 enum class TileType {
-    Empty,      // Bloc vide
-    Solid,      // Bloc plein destructible
-    Object,     // Objet à collecter
-    Obstacle,   // Obstacle indestructible
-    Trap        // Piège
+    Empty,
+    Solid,
+    Object,
+    Obstacle,
+    Trap
 };
 
 class Tile {
@@ -20,5 +20,5 @@ public:
 
 private:
     TileType type;
-    std::string spritePath; // Chemin vers le sprite
+    std::string spritePath;
 };
