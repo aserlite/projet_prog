@@ -9,7 +9,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
-#include "text.hpp"
 
 int WINDOW_WIDTH = 800;
 int WINDOW_HEIGHT = 800;
