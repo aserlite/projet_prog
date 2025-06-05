@@ -1,24 +1,21 @@
+#include <glad/glad.h>
 #include "start_screen.hpp"
 #include <iostream>
-#include "text.hpp"
-#include <glad/glad.h>
+#include "texture_manager.hpp"
+#include "draw_scene.hpp"
 
 static bool startScreenActive = true;
+static Texture startScreenTexture;
 
 void initStartScreen() {
     startScreenActive = true;
+    startScreenTexture.loadFromFile("assets/images/startScreen.jpg");
 }
 
 void drawStartScreen() {
-    glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    myEngine.mvMatrixStack.loadIdentity();
-    myEngine.updateMvMatrix();
-
-    // drawText(200, 350, "WELCOME TO THE GAME", 2.0f);
-    // drawText(200, 300, "Press SPACE to start", 1.0f);
-    // drawText(200, 250, "Press ESC to quit", 1.0f);
-    // drawText(200, 200, "Use zqsd to move and e to mine", 1.0f); 
+    startScreenTexture.attachTexture();
+    drawSquare(0.0f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f);
+    startScreenTexture.detachTexture();
 }
 
 bool isStartScreenActive() {

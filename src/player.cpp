@@ -168,7 +168,7 @@ void Player::checkEnemyCollision(const std::vector<Enemy>& enemies)
     float playerBottom = y;
 
     for (const auto& enemy : enemies) {
-        float enemySize = size; // ou adapte si les ennemis sont plus petits
+        float enemySize = size;
         float ex = enemy.getX();
         float ey = enemy.getY();
 
@@ -177,7 +177,7 @@ void Player::checkEnemyCollision(const std::vector<Enemy>& enemies)
         float enemyTop    = ey + enemySize;
         float enemyBottom = ey;
 
-        // Collision AABB
+        // Collision
         bool collision = playerLeft < enemyRight && playerRight > enemyLeft &&
                          playerBottom < enemyTop && playerTop > enemyBottom;
     }
@@ -234,7 +234,7 @@ bool Player::isInEnemy(const std::vector<Enemy>& enemies) const {
         float enemyTop    = ey + enemySize;
         float enemyBottom = ey;
 
-        // Collision AABB
+        // Collision
         if (playerLeft < enemyRight && playerRight > enemyLeft &&
             playerBottom < enemyTop && playerTop > enemyBottom) {
             return true; // Collision avec un ennemi
@@ -253,7 +253,7 @@ std::pair<float, float> findSafeSpawn(TileMap& map, int radius) {
         int x = distX(gen);
         int y = distY(gen);
 
-        // Vérifie que la zone autour est "safe"
+        // Vérifie que la zone autour est safe
         bool safe = true;
         for (int dx = -radius; dx <= radius && safe; ++dx) {
             for (int dy = -radius; dy <= radius && safe; ++dy) {

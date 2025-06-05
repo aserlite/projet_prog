@@ -13,6 +13,7 @@ extern Player player;
 extern std::vector<Enemy> enemies;
 extern std::vector<std::vector<std::pair<int, int>>> flowField;
 extern TileMap* globalMap;
+static bool pauseActive = false;
 
 float gElapsedTime = 0.0f;
 
@@ -20,6 +21,7 @@ void runGameLoop(GLFWwindow* window) {
     initScene();
     initStartScreen();
     initGameOverScreen();
+    initWinScreen();
 
     auto startTime = std::chrono::high_resolution_clock::now();
     float elapsedTime = 0.0f;
@@ -34,6 +36,9 @@ void runGameLoop(GLFWwindow* window) {
             drawStartScreen();
             glfwSwapBuffers(window);
             glfwPollEvents();
+            if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+            }
             if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
                 setStartScreenActive(false);
                 TileMap* newMap = new TileMap(35, 35);
@@ -75,6 +80,9 @@ void runGameLoop(GLFWwindow* window) {
                 setGameOverScreenActive(false);
                 startTime = std::chrono::high_resolution_clock::now();
             }
+            if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+            }
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                 break;
             }
@@ -102,6 +110,9 @@ void runGameLoop(GLFWwindow* window) {
                 setWinScreenActive(false);
                 startTime = std::chrono::high_resolution_clock::now();
             }
+            if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+                glfwSetWindowShouldClose(window, GLFW_TRUE);
+            }
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                 break;
             }
@@ -125,8 +136,11 @@ void runGameLoop(GLFWwindow* window) {
             player.setDirection(Direction::Right);
             player.move(1.0f, 0.0f, *globalMap);
         }
-        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
             player.mine(*globalMap);
+        }
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
         }
 
         int playerX = static_cast<int>(player.getX());

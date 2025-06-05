@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #define GLFW_INCLUDE_NONE
 #include "tile_map.hpp"
 #include "draw_scene.hpp"
@@ -5,7 +6,6 @@
 #include "enemy.hpp"
 #include "flow_field.hpp"
 #include "game_loop.hpp"
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
@@ -76,7 +76,6 @@ int main() {
 
     runGameLoop(window);
 
-    quitText();
     glfwTerminate();
     return 0;
 }
@@ -87,4 +86,3 @@ int main() {
 // - afficher le temps
 // - ajouter un menu au debut 
 // - ajouter un écran de fin
-

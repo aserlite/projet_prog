@@ -1,27 +1,26 @@
 #include "win_screen.hpp"
 #include <iostream>
-#include <glad/glad.h>
-#include "text.hpp"
+#include "texture_manager.hpp"
+#include "draw_scene.hpp"
 
-static bool WinScreenActive = false;
+static bool winScreenActive = false;
+static Texture winScreenTexture;
 
 void initWinScreen() {
-    WinScreenActive = true;
+    winScreenActive = false;
+    winScreenTexture.loadFromFile("assets/images/winScreen.jpg");
 }
 
 void drawWinScreen(int score, float timeSeconds) {
-    glClearColor(0.05f, 0.25f, 0.05f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    myEngine.mvMatrixStack.loadIdentity();
-    myEngine.updateMvMatrix();
-
-    // drawText(200, 350, "GAME OVER", 2.0f); 
+    winScreenTexture.attachTexture();
+    drawSquare(0.0f, 0.0f, 2.0f, 1.0f, 1.0f, 1.0f);
+    winScreenTexture.detachTexture();
 }
 
 bool isWinScreenActive() {
-    return WinScreenActive;
+    return winScreenActive;
 }
 
 void setWinScreenActive(bool active) {
-    WinScreenActive = active;
+    winScreenActive = active;
 }

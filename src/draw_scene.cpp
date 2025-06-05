@@ -5,7 +5,6 @@
 #include "enemy.hpp"
 #include <vector>
 #include "texture_manager.hpp"
-#include "text.hpp"
 
 StandardMesh carre;
 
@@ -62,6 +61,7 @@ void drawSquare(float x, float y, float size, float r, float g, float b)
     myEngine.setFlatColor(r, g, b);
     carre.draw();
     myEngine.mvMatrixStack.popMatrix();
+    std::cout << "Square drawn." << std::endl;
 }
 
 void drawScene()
@@ -150,7 +150,7 @@ void drawScene()
         enemyTexture.detachTexture();
     }
 
-    // // Affichage du score et du temps
+    // // // Affichage du score et du temps
     // char scoreStr[64];
     // snprintf(scoreStr, sizeof(scoreStr), "Score: %d", player.getScore());
 

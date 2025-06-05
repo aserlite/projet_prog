@@ -20,6 +20,7 @@ bool Texture::loadFromFile(const std::string& path, bool flip) {
         texID = 0;
         return false;
     }
+    std::cout << "[Texture] Chargement réussi : " << path << " (" << w << "x" << h << ", " << c << " composantes)\n";
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
