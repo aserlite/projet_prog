@@ -1,4 +1,4 @@
-#version 410 core
+#version 330 core
 
 layout(location=0) in vec3 vx_pos; // Indice 0
 layout(location=2) in vec2 vx_uvs; // Indice 3

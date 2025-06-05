@@ -1,4 +1,4 @@
-#version 410 core 
+#version 330 core 
 
 #define M_PI 3.1415926535897932384626433832795
 const int Nmax = 255;

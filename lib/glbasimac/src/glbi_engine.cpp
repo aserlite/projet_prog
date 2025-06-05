@@ -18,11 +18,11 @@ namespace glbasimac {
 			idShader[0] = ShaderManager::loadShader(exe_path::dir() / "assets/shaders/flat_shading_3D.vert",exe_path::dir() / "assets/shaders/flat_shading.frag",true);
 			std::cerr<<"Phong 3D"<<std::endl;
 			idShader[1] = ShaderManager::loadShader(exe_path::dir() / "assets/shaders/phong_shading.vert",exe_path::dir() / "assets/shaders/phong_shading.frag",true);
-		}
-		mvMatrixStack.loadIdentity();
+		}		mvMatrixStack.loadIdentity();
 		glUseProgram(idShader[0]);
 		if (!mode2D) {
 			glUniform1i(glGetUniformLocation(idShader[0],"use_texture"),useTexture);
+			glUniform3f(glGetUniformLocation(idShader[0],"flatColor"),1.0f,1.0f,1.0f);
 			glUseProgram(idShader[1]);
 			glUniform3fv(glGetUniformLocation(idShader[1],"attenuationFactor"),1,attFactors);
 			glUniform1f(glGetUniformLocation(idShader[1],"shininess"),0.0);
@@ -31,12 +31,13 @@ namespace glbasimac {
 			glUseProgram(idShader[0]);
 		}
 		else {
+			glUniform1i(glGetUniformLocation(idShader[0],"use_texture"),useTexture);
+			glUniform3f(glGetUniformLocation(idShader[0],"flatColor"),1.0f,1.0f,1.0f);
 			glUniformMatrix4fv(glGetUniformLocation(idShader[currentShader],"modelviewMat"),1,GL_FALSE,mvMatrixStack.getTopGLMatrix());
 		}
 	}
-
 	void GLBI_Engine::setFlatColor(float r,float g,float b) {
-		glVertexAttrib3f(glGetAttribLocation(idShader[currentShader],"vx_col"),r,g,b);
+		glUniform3f(glGetUniformLocation(idShader[currentShader],"flatColor"),r,g,b);
 	}
 
 	void GLBI_Engine::updateMvMatrix() {
@@ -75,12 +76,15 @@ namespace glbasimac {
 		}
 		mvMatrixStack.addTransformation(mat);
 	}
-
 	void GLBI_Engine::activateTexturing(bool use_texture) {
 		useTexture = use_texture;
 		glActiveTexture(GL_TEXTURE0);
 		glUniform1i(glGetUniformLocation(idShader[currentShader],"tex0"),0);
 		glUniform1i(glGetUniformLocation(idShader[currentShader],"use_texture"),useTexture);
+		// Initialize flatColor for flat shading
+		if (currentShader == 0) {
+			glUniform3f(glGetUniformLocation(idShader[currentShader],"flatColor"),1.0f,1.0f,1.0f);
+		}
 	}
 
 	void GLBI_Engine::switchToFlatShading() {
@@ -121,13 +125,12 @@ namespace glbasimac {
 			}
 		}
 	}
-
 	void GLBI_Engine::setNormalForConvex2DShape(const Vector3D& nml) {
 		if (mode2D || currentShader == 0) {
 			std::cerr<<"Unable to set light position in 2D mode or in Flat shading"<<std::endl;
 		}
 		else {
-			glVertexAttrib3f(glGetAttribLocation(idShader[currentShader],"vx_nml"),nml.x,nml.y,nml.z);
+			glUniform3f(glGetUniformLocation(idShader[currentShader],"defaultNormal"),nml.x,nml.y,nml.z);
 		}
 	}
 
