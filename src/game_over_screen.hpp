@@ -10,3 +10,4 @@ void initGameOverScreen();
 void drawGameOverScreen(int score, float timeSeconds);
 bool isGameOverScreenActive();
 void setGameOverScreenActive(bool active);
+int handleGameOverScreenClick(float mouseX, float mouseY);

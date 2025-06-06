@@ -10,3 +10,4 @@ void initWinScreen();
 void drawWinScreen(int score, float timeSeconds);
 bool isWinScreenActive();
 void setWinScreenActive(bool active);
+int handleWinScreenClick(float mouseX, float mouseY);
